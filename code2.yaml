@@ -1,0 +1,41 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: true
+  vars:
+    user_name: koffi95
+    color: green
+  tasks:
+    - name: update
+      apt:
+        name: passwd
+        state: present
+      when: ansible_distribution not in "Debian, Ubuntu"
+      tags: app1
+    - name: create group
+      group:
+        name: cloudteam
+        state: present
+#      when: ansible_distribution_major_version < 9
+    - name: create user
+      user:
+        name: "{{user_name}}"
+        comment: Koffi Admin
+        group: cloudteam
+- hosts: db
+  become: yes
+  tasks:
+    - name: install apache
+      apt: 
+        name: apache2
+        state: present
+    - name: start service 
+      service: name=apache2 state=started enabled=yes
+      tags:
+        - service
+    - name: copy index
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+        mode: 'o644'
+

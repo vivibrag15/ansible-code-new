@@ -1,0 +1,13 @@
+---
+- hosts: db
+  gather_facts: false
+#  ignore_errors: true
+  tasks:
+    - name: Check the date 
+      command: datejh
+      ignore_errors: yes
+    - name: Check the uptime 
+      command: |
+        uptime
+        date
+        nproc

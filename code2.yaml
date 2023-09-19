@@ -1,11 +1,44 @@
 ---
 - hosts: all
   become: yes
-  gather_facts: true
+  gather_facts: no
+  ignore_errors: true
   vars:
     user_name: koffi95
     color: green
+
   tasks:
+    # - name: install softwares 
+    #   package: 
+    #     state: present
+    #     name: 
+    #       - wget
+    #       - ntp
+    #       - finger
+    #       - curl
+    # - name: install software 
+    #   package:
+    #     state: present
+    #     name: "{{item}}"
+    #     with_items:
+    #       - wget
+    #       - ntp
+    #       - finger
+    #       - curl
+    - name: check uptime
+      command: uptime
+      tags: 
+        - cm
+    - name: install softwares
+      package: 
+        state: present
+        name: "{{item}}"
+      loop: 
+        - wget
+    #    - finger
+        - curl
+
+
     - name: update
       apt:
         name: passwd
@@ -24,6 +57,7 @@
         group: cloudteam
 - hosts: db
   become: yes
+  gather_facts: no
   tasks:
     - name: install apache
       apt: 

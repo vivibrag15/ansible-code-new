@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+  ignore_errors: true
+  tasks:
+    - name: Generate Base64-encoded credentials
+      shell: echo -n 'admin:devops' | base64
+      register: base64_encoded_credentials
+      changed_when: false  # Do not treat this as a change
+
+    - name: Download artifact from Nexus
+      get_url:
+        url: http://198.58.119.40:8081/repository/koffi-repo/bioMedical-0.0.2-SNAPSHOT.jar
+        dest: "/tmp"
+        headers:
+          Authorization: "Basic {{ base64_encoded_credentials.stdout }}"
+      register: download_result
+
+    - name: Check download status
+      debug:
+        var: download_result.status_code

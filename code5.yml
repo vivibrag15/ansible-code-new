@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+  ignore_errors: true
+  tasks:
+    - name: Modify line in file
+      lineinfile:
+        path: /etc/selinux/semanage.conf
+        #regexp: '^module-store ='
+        insertafter: '^module-store ='
+        state: absent
+        line: module-store = sergio
+        #create: yes
